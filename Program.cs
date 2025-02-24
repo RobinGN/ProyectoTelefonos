@@ -160,11 +160,11 @@
         {
             try
             {
-                HttpClient Client = new HttpClient();
-                //HtmlDocument Document = new();
+                //HttpClient Client = new HttpClient();
+                HttpClient Client = new();
                 string Html = await Client.GetStringAsync(site);
-                HtmlDocument Document = new HtmlDocument();
-                //HtmlDocument Document = new();
+                //HtmlDocument Document = new HtmlDocument();
+                HtmlDocument Document = new();
                 Document.LoadHtml(Html);
 
                 return string.Join(" ", Document.DocumentNode.Descendants().Where(n => n.NodeType == HtmlNodeType.Text && !string.IsNullOrWhiteSpace(n.InnerText)).Select(n => n.InnerText.Trim()));
@@ -178,7 +178,7 @@
 
         static async void Main(string[] args)
         {
-            string TextFile = "direccion/de/repos/en/computadora.txt";//Necesito poner la verdadera direccion del archivo en mi compu
+            string TextFile = @"C:\Users\carlo\OneDrive\Escritorio\Trabajos\ICC\6to\Automatas\Proyecto\Telefonos\ProyectoTelefonos\info.txt";//Necesito poner la verdadera direccion del archivo en mi compu
             string[] Page = File.ReadAllLines(TextFile);
 
             if (Page.Length == 0)
@@ -190,6 +190,12 @@
             Console.WriteLine("Automatas\nBienvenido al proyecto, elija la opción de la que desee extraer de su archivo:");
             Console.WriteLine("a) Emails \nb)Telefonos");
             string Selection = Console.ReadLine();
+
+            if (!(Selection == "a" || Selection == "b"))
+            {
+                Console.WriteLine("Eso no se puede bro");
+                return;
+            }
 
             List<string> List = new List<string>();
             foreach (string W in Page)
@@ -209,9 +215,15 @@
             {
                 if (Selection == "a")
                 {
+                    File.WriteAllLines(@"C:\Users\carlo\OneDrive\Escritorio\Trabajos\ICC\6to\Automatas\Proyecto\Telefonos\ProyectoTelefonos\Mail.txt", List);
+                    List.ForEach(Console.WriteLine);
+                    Console.WriteLine("Mails almacenados");
                 }
                 else if (Selection == "b")
                 {
+                    File.WriteAllLines(@"C:\Users\carlo\OneDrive\Escritorio\Trabajos\ICC\6to\Automatas\Proyecto\Telefonos\ProyectoTelefonos\Tels.txt", List);
+                    List.ForEach(Console.WriteLine);
+                    Console.WriteLine("Telefonos almacenados");
                 }
             }
             else
