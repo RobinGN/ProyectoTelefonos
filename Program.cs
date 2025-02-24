@@ -156,9 +156,68 @@
             return Telephones;
         }
 
-        static void Main(string[] args)
+        static async Task<string> WebText(string site)
         {
-            
+            try
+            {
+                HttpClient Client = new HttpClient();
+                //HtmlDocument Document = new();
+                string Html = await Client.GetStringAsync(site);
+                HtmlDocument Document = new HtmlDocument();
+                //HtmlDocument Document = new();
+                Document.LoadHtml(Html);
+
+                return string.Join(" ", Document.DocumentNode.Descendants().Where(n => n.NodeType == HtmlNodeType.Text && !string.IsNullOrWhiteSpace(n.InnerText)).Select(n => n.InnerText.Trim()));
+            }
+            catch (Exception e)
+            {
+                return "";
+            }
+
+        }
+
+        static async void Main(string[] args)
+        {
+            string TextFile = "direccion/de/repos/en/computadora.txt";//Necesito poner la verdadera direccion del archivo en mi compu
+            string[] Page = File.ReadAllLines(TextFile);
+
+            if (Page.Length == 0)
+            {
+                Console.WriteLine("Al archivo no le metiste nada bro");
+                return;
+            }
+
+            Console.WriteLine("Automatas\nBienvenido al proyecto, elija la opción de la que desee extraer de su archivo:");
+            Console.WriteLine("a) Emails \nb)Telefonos");
+            string Selection = Console.ReadLine();
+
+            List<string> List = new List<string>();
+            foreach (string W in Page)
+            {
+                string Info = await WebText(W);
+                if (Selection == "a")
+                {
+                    List.AddRange(InputsMails(Info));
+                }
+                else if (Selection == "b")
+                {
+                    List.AddRange(InputsTelephones(Info));
+                }
+            }
+
+            if (List.Count > 0)
+            {
+                if (Selection == "a")
+                {
+                }
+                else if (Selection == "b")
+                {
+                }
+            }
+            else
+            {
+                Console.WriteLine("No hay archivos bro skill issue");
+            }
         }
     }
 }
