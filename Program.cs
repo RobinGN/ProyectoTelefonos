@@ -1,5 +1,13 @@
 ﻿namespace ProyectoTelefonos
 {
+    using System;
+    using System.IO;
+    using System.Xml;
+    using System.Linq;
+    using System.Net.Http;
+    using System.Threading.Tasks;
+    using System.Collections.Generic;
+    using HtmlAgilityPack;
     internal class Program
     {
         public static char[] Nums = ['0','1','2','3','4','5','6','7','8','9'];
@@ -54,8 +62,99 @@
             {("q8", 'v'), "q8"}
         };
 
-        public static string[] TelsFinalState = { "q10" };
-        public static string[] MailsFinalState = { };
+        public static string[] TelsFinalState = { "q10"};
+        public static string[] MailsFinalStates = {"q7", "q8"};
+
+        public static List<string> InputsMails(string input)
+        {
+            List<string> Mails = new List<string>();
+            string Mail = "";
+            string IState = "q0";
+            string AState = IState;
+            char Initial = 'y';
+            foreach (char Current in input)
+            {
+                Initial = 'y';
+
+                if (Nums.Contains(Current))
+                    Initial = 'n';
+                else if (Letters.Contains(Current))
+                    Initial = 'v';
+                else if (At.Contains(Current))
+                    Initial = '@';
+                else if (SLine.Contains(Current))
+                    Initial = '-';
+                else if (DLine.Contains(Current))
+                    Initial = '_';
+                else if (Dot.Contains(Current))
+                    Initial = '.';
+
+                if (AutomatonMails.TryGetValue((AState, Initial), out string NState))
+                {
+                    AState = NState;
+                    Mail += Current;
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(Mail) && MailsFinalStates.Contains(AState))
+                    {
+                        Mails.Add(Mail);
+                    }
+                    Mail = "";
+                    AState = IState;
+                }
+            }
+            if (MailsFinalStates.Contains(AState))
+            {
+                Mails.Add(Mail);
+            }
+
+            return Mails;
+        }
+
+        public static List<string> InputsTelephones(string input)
+        {
+            List<string> Telephones = new List<string>();
+            string Tel = "";
+            string IState = "q0";
+            string AState = IState;
+            char Initial = 'y';
+            foreach (char Current in input)
+            {
+                Initial = 'y';
+
+                if (Nums.Contains(Current))
+                    Initial = 'n';
+                else if (SLine.Contains(Current))
+                    Initial = '-';
+                else if (LeftP.Contains(Current))
+                    Initial = 'l';
+                else if (RightP.Contains(Current))
+                    Initial = 'r';
+                else if (Space.Contains(Current))
+                    Initial = ' ';
+
+                if (AutomatonTelephones.TryGetValue((AState, Initial), out string NState))
+                {
+                    AState = NState;
+                    Tel += Current;
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(Tel) && TelsFinalState.Contains(AState))
+                    {
+                        Telephones.Add(Tel);
+                    }
+                    Tel = "";
+                    AState = IState;
+                }
+            }
+            if (TelsFinalState.Contains(AState))
+            {
+                Telephones.Add(Tel);
+            }
+            return Telephones;
+        }
 
         static void Main(string[] args)
         {
